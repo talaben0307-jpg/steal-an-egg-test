@@ -1,5 +1,5 @@
 -- ==========================================
--- BYPASS ANTI-CHEAT (Chặn báo cáo vị trí / tốc độ)
+-- 1. BYPASS ANTI-CHEAT CO BAN
 -- ==========================================
 pcall(function()
     local mt = getrawmetatable(game)
@@ -16,15 +16,27 @@ pcall(function()
     setreadonly(mt, true)
 end)
 
-local CPZMenu = loadstring(game:HttpGet("https://raw.githubusercontent.com/talaben0307-jpg/cpzmenu/refs/heads/main/menu"))()
+-- ==========================================
+-- 2. TẢI THƯ VIỆN CPZMENU
+-- ==========================================
+local success, CPZMenu = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/talaben0307-jpg/cpzmenu/refs/heads/main/menu"))()
+end)
 
--- Tạo Window Cyberpunk cho Steal An Egg Ultimate
+if not success or not CPZMenu then
+    warn("[ERROR] Khong the tai thu vien CPZMenu! Kiem tra lai link raw.")
+    return
+end
+
+-- Khởi tạo Window
 local Window = CPZMenu:CreateWindow({
     Title = "Steal An Egg Ultimate Hub",
     SubTitle = "⚡ 13 Biomes Complete Edition"
 })
 
--- Hàm dịch chuyển nhặt trứng bằng Tween mượt mà
+-- ==========================================
+-- 3. HÀM FARM VÀ DỊCH CHUYỂN
+-- ==========================================
 local function AutoFarmTarget(targetName, isSpecial)
     pcall(function()
         local folder = workspace:FindFirstChild("Eggs") or workspace:FindFirstChild("Biomes") or workspace
@@ -44,7 +56,7 @@ local function AutoFarmTarget(targetName, isSpecial)
 end
 
 -- ==========================================
--- KHỞI TẠO CÁC TAB CHỨC NĂNG
+-- 4. KHỞI TẠO TAB & TÍNH NĂNG
 -- ==========================================
 local Tabs = {
     Biomes1 = Window:AddTab({ Title = "Biomes [1-5]" }),
@@ -54,9 +66,7 @@ local Tabs = {
     Misc = Window:AddTab({ Title = "Misc & ESP 👁️" })
 }
 
--- ==========================================
--- 1. TAB: BIOMES [1 - 5]
--- ==========================================
+-- TAB 1: Biomes 1-5
 Tabs.Biomes1:AddSection("1. Forest Biome")
 Tabs.Biomes1:AddButton({ Title = "🥚 Auto Farm - Forest", Callback = function() task.spawn(function() while task.wait(1) do AutoFarmTarget("Forest", false) end end) end })
 
@@ -72,9 +82,7 @@ Tabs.Biomes1:AddButton({ Title = "🌋 Auto Farm - Volcano", Callback = function
 Tabs.Biomes1:AddSection("5. Jungle Biome")
 Tabs.Biomes1:AddButton({ Title = "🌴 Auto Farm - Jungle", Callback = function() task.spawn(function() while task.wait(1) do AutoFarmTarget("Jungle", false) end end) end })
 
--- ==========================================
--- 2. TAB: BIOMES [6 - 10]
--- ==========================================
+-- TAB 2: Biomes 6-10
 Tabs.Biomes2:AddSection("6. Ocean Biome")
 Tabs.Biomes2:AddButton({ Title = "🌊 Auto Farm - Ocean", Callback = function() task.spawn(function() while task.wait(1) do AutoFarmTarget("Ocean", false) end end) end })
 
@@ -90,9 +98,7 @@ Tabs.Biomes2:AddButton({ Title = "🍬 Auto Farm - Candy", Callback = function()
 Tabs.Biomes2:AddSection("10. Cyber Biome")
 Tabs.Biomes2:AddButton({ Title = "🤖 Auto Farm - Cyber", Callback = function() task.spawn(function() while task.wait(1) do AutoFarmTarget("Cyber", false) end end) end })
 
--- ==========================================
--- 3. TAB: BIOMES [11 - 13]
--- ==========================================
+-- TAB 3: Biomes 11-13
 Tabs.Biomes3:AddSection("11. Mystic Biome")
 Tabs.Biomes3:AddButton({ Title = "✨ Auto Farm - Mystic", Callback = function() task.spawn(function() while task.wait(1) do AutoFarmTarget("Mystic", false) end end) end })
 
@@ -102,12 +108,10 @@ Tabs.Biomes3:AddButton({ Title = "☁️ Auto Farm - Heaven", Callback = functio
 Tabs.Biomes3:AddSection("13. Void Biome")
 Tabs.Biomes3:AddButton({ Title = "🌌 Auto Farm - Void", Callback = function() task.spawn(function() while task.wait(1) do AutoFarmTarget("Void", false) end end) end })
 
--- ==========================================
--- 4. TAB: SPECIAL EGGS & ALL BIOMES
--- ==========================================
+-- TAB SPECIAL
 Tabs.Special:AddSection("All Biomes Loop")
 Tabs.Special:AddButton({
-    Title = "🔥 Auto Farm Quét Lần Lượt Cả 13 Biome",
+    Title = "🔥 Auto Farm Quet Ca 13 Biome",
     Callback = function()
         task.spawn(function()
             local list = {"Forest","Desert","Snow","Volcano","Jungle","Ocean","Swamp","Mushroom","Candy","Cyber","Mystic","Heaven","Void"}
@@ -120,52 +124,10 @@ Tabs.Special:AddButton({
     end
 })
 
-Tabs.Special:AddSection("Event & Rare Eggs")
-Tabs.Special:AddButton({
-    Title = "⭐ Auto Farm Trứng Đặc Biệt / Rare",
-    Callback = function()
-        task.spawn(function()
-            while task.wait(1) do AutoFarmTarget("Special", true) end
-        end)
-    end
-})
-
--- ==========================================
--- 5. TAB: MISC & ESP (Speed, Instant Interact, ESP)
--- ==========================================
-Tabs.Misc:AddSection("Player Speed Control (Bypass Kick)")
-
-local speedEnabled = false
-local currentSpeed = 32
-
-Tabs.Misc:AddButton({
-    Title = "⚡ Bật / Tắt WalkSpeed Safe (Tốc độ x2)",
-    Callback = function()
-        speedEnabled = not speedEnabled
-        if speedEnabled then
-            task.spawn(function()
-                local RunService = game:GetService("RunService")
-                while speedEnabled do
-                    local char = game.Players.LocalPlayer.Character
-                    if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
-                        local hum = char.Humanoid
-                        if hum.MoveDirection.Magnitude > 0 then
-                            char:TranslateBy(hum.MoveDirection * (currentSpeed / 16))
-                        end
-                    end
-                    RunService.RenderStepped:Wait()
-                end
-            end)
-        end
-    end
-})
-
-Tabs.Misc:AddButton({ Title = "🚀 Tăng tốc độ cực nhanh (Tốc độ x3)", Callback = function() currentSpeed = 48 end })
-Tabs.Misc:AddButton({ Title = "🔄 Đưa tốc độ về Bình thường", Callback = function() currentSpeed = 16 speedEnabled = false end })
-
+-- TAB MISC
 Tabs.Misc:AddSection("Interaction Tools")
 Tabs.Misc:AddButton({
-    Title = "⚡ Bật Instant Interact (Không cần giữ phím E)",
+    Title = "⚡ Instant Interact (Hold = 0)",
     Callback = function()
         pcall(function()
             for _, v in pairs(workspace:GetDescendants()) do
@@ -180,7 +142,7 @@ Tabs.Misc:AddButton({
 
 Tabs.Misc:AddSection("Egg ESP System")
 Tabs.Misc:AddButton({
-    Title = "👁️ Bật ESP Trứng Toàn Bản Đồ (Realtime)",
+    Title = "👁️ Bat ESP Trung Realtime",
     Callback = function()
         pcall(function()
             local CoreGui = game:GetService("CoreGui")
@@ -218,5 +180,5 @@ Tabs.Misc:AddButton({
     end
 })
 
--- Mặc định chọn tab đầu tiên
+-- Chộn tab mặc định
 Window:SelectTab(1)
